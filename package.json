@@ -1,0 +1,16 @@
+{
+  "name": "cekkes",
+  "version": "1.0.0",
+  "description": "Aplikasi web cek kesehatan dengan saran berbasis AI (Gemini).",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "syariful adnan",
+  "license": "MIT",
+  "dependencies": {
+    "@google/genai": "^2.13.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}

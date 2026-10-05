@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cekkes — cek kesehatanmu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Semua tampilan ada di file terpisah ini -->
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== HALAMAN LOGIN (default: admin / admin, tanpa database) ===== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2-5 3 10 2.5-7 1.5 2h4"/></svg>
+    </div>
+    <h2>cek<span>kes</span></h2>
+    <p class="sub">Masuk untuk mulai cek kesehatanmu</p>
+    <div class="field"><label for="loginUser">Username</label><input type="text" id="loginUser" placeholder="admin" autocomplete="username"></div>
+    <div class="field"><label for="loginPass">Password</label><input type="password" id="loginPass" placeholder="••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn" onclick="doLogin()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>Masuk</button>
+    <div class="err" id="loginErr" style="text-align:center"></div>
+    <div class="login-hint">Akun default — username: <code>admin</code> · password: <code>admin</code></div>
+  </div>
+</div>
+
+<!-- ===== APLIKASI (tampil setelah login) ===== -->
+<div class="wrap" id="app" style="display:none">
+  <header class="top">
+    <div class="brand">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2-5 3 10 2.5-7 1.5 2h4"/></svg>
+      </div>
+      <div>
+        <h1>cek<span>kes</span></h1>
+        <p>Cek kondisi tubuhmu dalam hitungan detik</p>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Keluar</button>
+  </header>
+
+  <div class="shell">
+    <!-- NAVIGASI -->
+    <nav class="tools" id="nav">
+      <div class="nav-label">Alat cek</div>
+      <button class="tool-btn active" data-go="badan"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>Badan Ideal</button>
+      <button class="tool-btn" data-go="kalori"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2-.4-4 1-5.5C11.5 7 15 6 15 11a6 6 0 1 1-12 0c0-1.2.4-2.4 1-3.5"/></svg>Kalori Harian</button>
+      <button class="tool-btn" data-go="air"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7S5 10 5 14a7 7 0 0 0 14 0c0-4-7-11.3-7-11.3z"/></svg>Kebutuhan Air</button>
+      <button class="tool-btn" data-go="pinggang"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 17h18M7 7v10M17 7v10"/></svg>Rasio Pinggang</button>
+      <button class="tool-btn" data-go="jantung"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 8L9 4l-3 8H2"/></svg>Zona Jantung</button>
+      <button class="tool-btn" data-go="tidur"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>Jam Tidur</button>
+      <button class="tool-btn" data-go="umur"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Cek Umur</button>
+      <button class="tool-btn" data-go="subur"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2a5 5 0 0 0 0 7 5 5 0 0 0 0-7zM12 22a5 5 0 0 1 0-7 5 5 0 0 1 0 7zM2 12a5 5 0 0 1 7 0 5 5 0 0 1-7 0zM22 12a5 5 0 0 0-7 0 5 5 0 0 0 7 0z"/></svg>Masa Subur</button>
+      <button class="tool-btn" data-go="mental"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 0 0-5.9.7A3 3 0 0 0 4 11a3 3 0 0 0 2 5 3 3 0 0 0 6 0V5zM12 5a3 3 0 0 1 5.9.7A3 3 0 0 1 20 11a3 3 0 0 1-2 5 3 3 0 0 1-6 0"/></svg>Cek Mental</button>
+      <button class="tool-btn" data-go="score"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-6M6 20v-4M18 20v-9M4 12a8 8 0 0 1 16 0"/></svg>Health Score</button>
+      <button class="tool-btn" data-go="riwayat"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v6h6M3 9a9 9 0 1 0 2.6-5"/><path d="M12 7v5l3 2"/></svg>Riwayat</button>
+    </nav>
+
+    <!-- ISI -->
+    <main>
+
+      <!-- ===== BADAN IDEAL ===== -->
+      <section class="view active" data-view="badan">
+        <div class="card">
+          <div class="view-head">
+            <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>BMI · Berat ideal · Metabolisme</span>
+            <h2>Cek badan idealmu</h2>
+            <p>Masukkan data dasar untuk melihat BMI, berat badan ideal, dan kebutuhan energi basal (BMR) sekaligus.</p>
+          </div>
+          <div class="grid g2">
+            <div class="field"><label>Jenis kelamin</label>
+              <div class="seg">
+                <div class="seg-opt"><input type="radio" name="bSex" id="bSexP" value="pria" checked><label for="bSexP">Pria</label></div>
+                <div class="seg-opt"><input type="radio" name="bSex" id="bSexW" value="wanita"><label for="bSexW">Wanita</label></div>
+              </div>
+            </div>
+            <div class="field"><label for="bAge">Umur <span class="hint">tahun</span></label><input type="number" id="bAge" placeholder="mis. 25" min="1" max="120"></div>
+            <div class="field"><label for="bTinggi">Tinggi badan <span class="hint">cm</span></label><input type="number" id="bTinggi" placeholder="mis. 170" min="50" max="250"></div>
+            <div class="field"><label for="bBerat">Berat badan <span class="hint">kg</span></label><input type="number" id="bBerat" placeholder="mis. 65" min="10" max="400" step="0.1"></div>
+          </div>
+          <div class="actions">
+            <button class="btn" onclick="hitungBadan()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Hitung sekarang</button>
+          </div>
+          <div class="err" id="bErr"></div>
+
+          <div class="result" id="bResult">
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px">
+              <span class="badge" id="bBadge"><span class="dot"></span><span id="bBadgeText"></span></span>
+            </div>
+            <div class="stat-row">
+              <div class="stat"><div class="k">BMI</div><div class="v" id="bBmi">–</div></div>
+              <div class="stat"><div class="k">Berat ideal (Broca)</div><div class="v" id="bIdeal">–<span class="u"> kg</span></div></div>
+              <div class="stat"><div class="k">Rentang sehat</div><div class="v" id="bRange" style="font-size:1.25rem">–</div></div>
+              <div class="stat"><div class="k">BMR (energi basal)</div><div class="v" id="bBmr">–<span class="u"> kkal</span></div></div>
+            </div>
+            <div class="callout" id="bNote"></div>
+
+            <div class="ai-box">
+              <div class="ai-head">
+                <div class="t"><span class="spark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span>Saran personal dari AI</div>
+                <button class="btn ghost" id="bAiBtn" onclick="saranBadan()">Minta saran</button>
+              </div>
+              <div class="ai-body" id="bAiBody"><div class="ai-content" id="bAiContent"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="disclaimer"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>Semua hasil di cekkes bersifat estimasi untuk edukasi, bukan diagnosis medis. Untuk keputusan kesehatan, konsultasikan dengan dokter atau tenaga kesehatan.</span></div>
+      </section>
+
+      <!-- ===== KALORI / TDEE ===== -->
+      <section class="view" data-view="kalori">
+        <div class="card">
+          <div class="view-head">
+            <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2-.4-4 1-5.5C11.5 7 15 6 15 11a6 6 0 1 1-12 0"/></svg>TDEE</span>
+            <h2>Kebutuhan kalori harian</h2>
+            <p>Perkiraan energi total yang kamu bakar per hari, plus target untuk menjaga, menurunkan, atau menaikkan berat badan.</p>
+          </div>
+          <div class="grid g2">
+            <div class="field"><label>Jenis kelamin</label>
+              <div class="seg">
+                <div class="seg-opt"><input type="radio" name="kSex" id="kSexP" value="pria" checked><label for="kSexP">Pria</label></div>
+                <div class="seg-opt"><input type="radio" name="kSex" id="kSexW" value="wanita"><label for="kSexW">Wanita</label></div>
+              </div>
+            </div>
+            <div class="field"><label for="kAge">Umur <span class="hint">tahun</span></label><input type="number" id="kAge" placeholder="mis. 25"></div>
+            <div class="field"><label for="kTinggi">Tinggi <span class="hint">cm</span></label><input type="number" id="kTinggi" placeholder="mis. 170"></div>
+            <div class="field"><label for="kBerat">Berat <span class="hint">kg</span></label><input type="number" id="kBerat" placeholder="mis. 65" step="0.1"></div>
+            <div class="field" style="grid-column:1/-1"><label for="kAkt">Tingkat aktivitas</label>
+              <select id="kAkt">
+                <option value="1.2">Jarang gerak — kerja duduk, tidak olahraga</option>
+                <option value="1.375">Ringan — olahraga 1–3x/minggu</option>
+                <option value="1.55" selected>Sedang — olahraga 3–5x/minggu</option>
+                <option value="1.725">Aktif — olahraga 6–7x/minggu</option>
+                <option value="1.9">Sangat aktif — kerja fisik / atlet</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions"><button class="btn" onclick="hitungKalori()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>Hitung kalori</button></div>
+          <div class="err" id="kErr"></div>
+          <div class="result" id="kResult">
+            <div class="stat-row">
+              <div class="stat"><div class="k">Pemeliharaan</div><div class="v" id="kMaint">–<span class="u"> kkal</span></div></div>
+              <div class="stat"><div class="k">Turun berat</div><div class="v" id="kLose" style="color:var(--sky)">–<span class="u"> kkal</span></div></div>
+              <div class="stat"><div class="k">Naik berat</div><div class="v" id="kGain" style="color:var(--emerald)">–<span class="u"> kkal</span></div></div>
+            </div>
+            <div class="callout">Turun/naik berat dihitung dari defisit atau surplus ±500 kkal/hari (setara ±0,5 kg per minggu). Perubahan bertahap lebih sehat dan tahan lama.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== AIR ===== -->
+      <section class="view" data-view="air">
+        <div class="card">
+          <div class="view-head">
+            <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 2.7S5 10 5 14a7 7 0 0 0 14 0c0-4-7-11.3-7-11.3z"/></svg>Hidrasi</span>
+            <h2>Kebutuhan air minum harian</h2>
+            <p>Perkiraan asupan cairan berdasarkan berat badan dan aktivitas harianmu.</p>
+          </div>
+          <div class="grid g2">
+            <div class="field"><label for="aBerat">Berat badan <span class="hint">kg</span></label><input type="number" id="aBerat" placeholder="mis. 65" step="0.1"></div>
+            <div class="field"><label for="aAkt">Aktivitas / olahraga per hari</label>
+              <select id="aAkt">
+                <option value="0">Hampir tidak berolahraga</option>
+                <option value="0.35" selected>Ringan — sekitar 30 menit</option>
+                <option value="0.7">Sedang — sekitar 60 menit</option>
+                <option value="1.1">Berat — 90 menit atau lebih</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions"><button class="btn" onclick="hitungAir()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>Hitung kebutuhan air</button></div>
+          <div class="err" id="aErr"></div>
+          <div class="result" id="aResult">
+            <div class="stat-row">
+              <div class="stat"><div class="k">Total per hari</div><div class="v" id="aLiter">–<span class="u"> L</span></div></div>
+              <div class="stat"><div class="k">Setara gelas</div><div class="v" id="aGelas">–<span class="u"> gelas</span></div></div>
+            </div>
+            <div class="callout">Perkiraan 1 gelas = 240 ml. Kebutuhan bisa naik saat cuaca panas, demam, atau ibu menyusui. Warna urine yang jernih-kekuningan adalah tanda hidrasi baik.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PINGGANG ===== -->
+      <section class="view" data-view="pinggang">
+        <div class="card">
+          <div class="view-head">
+            <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 7h18M3 17h18"/></svg>Waist-to-height ratio</span>
+            <h2>Rasio lingkar pinggang</h2>
+            <p>Indikator risiko kesehatan yang sering lebih peka dari BMI, karena mengukur lemak di sekitar perut.</p>
+          </div>
+          <div class="grid g2">
+            <div class="field"><label for="pPinggang">Lingkar pinggang <span class="hint">cm</span></label><input type="number" id="pPinggang" placeholder="mis. 80"></div>
+            <div class="field"><label for="pTinggi">Tinggi badan <span class="hint">cm</span></label><input type="number" id="pTinggi" placeholder="mis. 170"></div>
+          </div>
+          <div class="actions"><button class="btn" onclick="hitungPinggang()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>Hitung rasio</button></div>
+          <div class="err" id="pErr"></div>
+          <div class="result" id="pResult">
+            <div style="margin-bottom:16px"><span class="badge" id="pBadge"><span class="dot"></span><span id="pBadgeText"></span></span></div>
+            <div class="stat-row">
+              <div class="stat"><div class="k">Rasio pinggang : tinggi</div><div class="v" id="pRatio">–</div></div>
+            </div>
+            <div class="callout" id="pNote"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== JANTUNG ===== -->
+      <section class="view" data-view="jantung">
+        <div class="card">
+          <div class="view-head">
+            <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 8L9 4l-3 8H2"/></svg>Target heart rate</span>
+            <h2>Zona detak jantung olahraga</h2>
+            <p>Ketahui rentang detak jantung ideal untuk setiap tujuan latihan, dari pemanasan sampai performa maksimal.</p>
+          </div>
+          <div class="grid g2">
+            <div class="field"><label for="jAge">Umur <span class="hint">tahun</span></label><input type="number" id="jAge" placeholder="mis. 25"></div>
+            <div class="field"><label for="jRest">Detak istirahat <span class="hint">bpm · opsional</span></label><input type="number" id="jRest" placeholder="mis. 70"></div>
+          </div>
+          <div class="actions"><button class="btn" onclick="hitungJantung()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>Lihat zona</button></div>
+          <div class="err" id="jErr"></div>
+          <div class="result" id="jResult">
+            <div class="stat-row" style="margin-bottom:16px">
+              <div class="stat"><div class="k">Detak maksimal</div><div class="v" id="jMax">–<span class="u"> bpm</span></div></div>
+            </div>
+            <div id="jZones"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== TIDUR ===== -->
+      <section class="view" data-view="tidur">
+        <div class="card">
+          <div class="view-head">
+            <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>Siklus tidur 90 menit</span>
+            <h2>Jam tidur & bangun ideal</h2>
+            <p>Bangun di antara siklus tidur membuatmu terasa lebih segar. Pilih salah satu dan cekkes hitung waktu terbaiknya.</p>
+          </div>
+          <div class="grid g2">
+            <div class="field"><label for="tMode">Aku ingin tahu</label>
+              <select id="tMode" onchange="toggleTidur()">
+                <option value="wake">Jam tidur — kalau mau bangun jam tertentu</option>
+                <option value="sleep">Jam bangun — kalau tidur sekarang / jam tertentu</option>
+              </select>
+            </div>
+            <div class="field"><label for="tTime" id="tLabel">Mau bangun jam</label><input type="time" id="tTime"></div>
+          </div>
+          <div class="actions"><button class="btn" onclick="hitungTidur()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>Hitung waktu</button></div>
+          <div class="err" id="tErr"></div>
+          <div class="result" id="tResult">
+            <div class="callout" id="tHead"></div>
+            <div class="stat-row" id="tTimes" style="margin-top:14px"></div>
+            <div class="callout" style="margin-top:14px">Sudah termasuk perkiraan 15 menit untuk mulai tertidur. Idealnya orang dewasa butuh 5–6 siklus (7,5–9 jam) tidur berkualitas.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== UMUR ===== -->
+      <section class="view" data-view="umur">
+        <div class="card">
+          <div class="view-head">
+            <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg>Umur presisi</span>
+            <h2>Sudah berapa lama kamu hidup?</h2>
+            <p>Masukkan tanggal lahirmu, dan cekkes menghitung usiamu hingga detik ini — terus berdetak secara real-time.</p>
+          </div>
+          <div class="grid g2">
+            <div class="field"><label for="uTgl">Tanggal lahir</label><input type="date" id="uTgl"></div>
+            <div class="field"><label for="uJam">Jam lahir <span class="hint">opsional</span></label><input type="time" id="uJam"></div>
+          </div>
+          <div class="actions"><button class="btn" onclick="hitungUmur()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>Hitung umur</button></div>
+          <div class="err" id="uErr"></div>
+          <div class="result" id="uResult">
+            <div class="callout" id="uMain" style="margin-bottom:16px"></div>
+            <div class="age-live">
+              <div class="age-cell"><div class="n" id="uY">0</div><div class="l">Tahun</div></div>
+              <div class="age-cell"><div class="n" id="uMo">0</div><div class="l">Bulan</div></div>
+              <div class="age-cell"><div class="n" id="uD">0</div><div class="l">Hari</div></div>
+              <div class="age-cell"><div class="n" id="uH">0</div><div class="l">Jam</div></div>
+              <div class="age-cell"><div class="n" id="uMi">0</div><div class="l">Menit</div></div>
+              <div class="age-cell"><div class="n" id="uS">0</div><div class="l">Detik</div></div>
+            </div>
+            <div class="stat-row" style="margin-top:16px">
+              <div class="stat"><div class="k">Total hari hidup</div><div class="v" id="uTotalD" style="font-size:1.35rem">–</div></div>
+              <div class="stat"><div class="k">Kamu lahir hari</div><div class="v" id="uBornDay" style="font-size:1.35rem">–</div></div>
+              <div class="stat"><div class="k">Ulang tahun berikutnya</div><div class="v" id="uNext" style="font-size:1.35rem">–</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SUBUR ===== -->
+      <section class="view" data-view="subur">
+        <div class="card">
+          <div class="view-head">
+            <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/></svg>Siklus menstruasi</span>
+            <h2>Perkiraan masa subur</h2>
+            <p>Estimasi jadwal haid dan masa subur berikutnya berdasarkan siklusmu.</p>
+          </div>
+          <div class="grid g2">
+            <div class="field"><label for="sHpht">Hari pertama haid terakhir</label><input type="date" id="sHpht"></div>
+            <div class="field"><label for="sSiklus">Panjang siklus <span class="hint">hari · biasanya 21–35</span></label><input type="number" id="sSiklus" value="28" min="21" max="40"></div>
+          </div>
+          <div class="actions"><button class="btn" onclick="hitungSubur()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>Hitung siklus</button></div>
+          <div class="err" id="sErr"></div>
+          <div class="result" id="sResult">
+            <div class="stat-row">
+              <div class="stat"><div class="k">Perkiraan ovulasi</div><div class="v" id="sOvul" style="font-size:1.2rem;color:var(--emerald)">–</div></div>
+              <div class="stat"><div class="k">Masa subur</div><div class="v" id="sWindow" style="font-size:1.05rem">–</div></div>
+              <div class="stat"><div class="k">Perkiraan haid berikutnya</div><div class="v" id="sNext" style="font-size:1.2rem;color:var(--sky)">–</div></div>
+            </div>
+            <div class="callout">Ini hanya perkiraan berbasis kalender dan <strong>bukan metode kontrasepsi</strong> yang andal. Siklus bisa bergeser karena stres, hormon, atau kondisi lain.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== MENTAL ===== -->
+      <section class="view" data-view="mental">
+        <div class="card">
+          <div class="view-head">
+            <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 5a3 3 0 0 0-5.9.7A3 3 0 0 0 4 11a3 3 0 0 0 2 5 3 3 0 0 0 6 0V5z"/></svg>Skrining singkat</span>
+            <h2>Cek kesehatan mental</h2>
+            <p>Refleksi singkat tentang perasaanmu 2 minggu terakhir. Ini bukan diagnosis, hanya bahan untuk mengenali diri lebih baik.</p>
+          </div>
+          <div id="mQuestions"></div>
+          <div class="actions"><button class="btn" onclick="hitungMental()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>Lihat hasil refleksi</button></div>
+          <div class="err" id="mErr"></div>
+          <div class="result" id="mResult">
+            <div style="margin-bottom:14px"><span class="badge" id="mBadge"><span class="dot"></span><span id="mBadgeText"></span></span></div>
+            <div class="callout" id="mNote"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== HEALTH SCORE ===== -->
+      <section class="view" data-view="score">
+        <div class="card">
+          <div class="view-head">
+            <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 12a8 8 0 0 1 16 0"/></svg>Skor gabungan</span>
+            <h2>Health Score kamu</h2>
+            <p>Ringkasan dari semua pemeriksaan yang sudah kamu isi, jadi satu angka — plus prioritas dari AI tentang apa yang perlu diperbaiki lebih dulu.</p>
+          </div>
+          <div class="ring-wrap">
+            <div class="ring">
+              <svg width="170" height="170" viewBox="0 0 170 170">
+                <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0D9488"/><stop offset="1" stop-color="#0EA5E9"/></linearGradient></defs>
+                <circle class="track" cx="85" cy="85" r="72"/>
+                <circle class="prog" id="ring" cx="85" cy="85" r="72" stroke-dasharray="452" stroke-dashoffset="452"/>
+              </svg>
+              <div class="center"><div class="s" id="scoreNum">–</div><div class="sl" id="scoreLabel">belum ada</div></div>
+            </div>
+            <div class="score-notes" id="scoreNotes">
+              <div class="line" style="border:none;color:var(--muted)">Isi minimal satu alat cek untuk membuat skor.</div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn" onclick="hitungScore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 3v6h6M3 9a9 9 0 1 0 2.6-5"/></svg>Perbarui skor</button>
+          </div>
+          <div class="ai-box">
+            <div class="ai-head">
+              <div class="t"><span class="spark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span>Ringkasan & prioritas dari AI</div>
+              <button class="btn ghost" onclick="saranScore()">Minta ringkasan</button>
+            </div>
+            <div class="ai-body" id="scoreAiBody"><div class="ai-content" id="scoreAiContent"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== RIWAYAT ===== -->
+      <section class="view" data-view="riwayat">
+        <div class="card">
+          <div class="view-head">
+            <span class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 7v5l3 2"/></svg>Sesi ini</span>
+            <h2>Riwayat pemeriksaan</h2>
+            <p>Semua hasil cek dari sesi ini terkumpul di sini supaya mudah dibandingkan.</p>
+          </div>
+          <div id="histList">
+            <div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><path d="M3 3v6h6M3 9a9 9 0 1 0 2.6-5"/></svg><div>Belum ada pemeriksaan. Coba salah satu alat cek dulu.</div></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer>Dikembangkan oleh <strong>Samsul Arifin</strong> · developer aplikasi<br>cekkes · alat bantu cek kesehatan untuk edukasi · selalu konsultasikan kondisi seriusmu ke tenaga kesehatan</footer>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT — dipisah per fitur biar mudah dipelajari.
+     main.js WAJIB dimuat pertama (berisi mesin bersama:
+     login, navigasi, state, helper, riwayat, dan AI).
+============================================================ -->
+<script src="js/main.js"></script>
+<script src="js/badan.js"></script>
+<script src="js/kalori.js"></script>
+<script src="js/air.js"></script>
+<script src="js/pinggang.js"></script>
+<script src="js/jantung.js"></script>
+<script src="js/tidur.js"></script>
+<script src="js/umur.js"></script>
+<script src="js/subur.js"></script>
+<script src="js/mental.js"></script>
+<script src="js/score.js"></script>
+</body>
+</html>
